@@ -2,7 +2,7 @@
 (01204215 Object-Oriented Programming Laboratory class)
 
 ## Table of contents
-* [Git tutorial](#tutorial-for-git-beginer)
+* [Git tutorial](#tutorial-for-git-beginner)
     * [Windows user](#windows-user)
     * [Linux or macOS user](#linux-or-macos-user)
 
