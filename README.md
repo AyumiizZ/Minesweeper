@@ -2,7 +2,7 @@
 (01204215 Object-Oriented Programming Laboratory class)
 
 ## Table of contents
-* [Git tutorial](#tutorial-for-Git-beginer)
+* [Git tutorial](#tutorial-for-git-beginer)
     * [Windows user](#windows-user)
     * [Linux or macOS user](#linux-or-macos-user)
 
@@ -21,6 +21,7 @@ __Second way__
 3. Click git bash here
 4. paste this command `git clone https://github.com/AyumiizZ/Minesweeper.git` in git bash
 5. Enjoy my game :P
+
 [Back to top](#minesweeper-game)
 
 ### Linux or macOS user
