@@ -30,3 +30,5 @@ __Second way__
 3. `cd <your directory name>`
 4. `git clone https://github.com/AyumiizZ/Minesweeper.git`
 5. Enjoy my game :3
+
+[Back to top](#minesweeper-game)
