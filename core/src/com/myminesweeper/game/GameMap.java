@@ -10,22 +10,19 @@ public class GameMap {
 		genMines();
 		genNum();
 	}
-	
+
 	private void genMines()
 	{
-		for(int i = 0; i < 16;i++)
+		for(int i = 0; i < 40; i++)
 		{
-			for(int j = 0; j < 16; j++)
+			int x = rand.nextInt(16);
+			int y = rand.nextInt(16);
+			while (MAP[x][y] == 9)
 			{
-				int x = rand.nextInt(16);
-				int y = rand.nextInt(16);
-				while (MAP[x][y] == -1)
-				{
-					x = rand.nextInt(16);
-					y = rand.nextInt(16);
-				}
-				MAP[x][y] = -1;
+				x = rand.nextInt(16);
+				y = rand.nextInt(16);
 			}
+			MAP[x][y] = 9;
 		}
 	}
 	private void genNum()
@@ -34,7 +31,7 @@ public class GameMap {
 		{
 			for(int j =0; j < 16; j++)
 			{
-				if(MAP[i][j] == -1)
+				if(MAP[i][j] == 9)
 				{
 					for(int x = -1;x <= 1;x++)
 					{
@@ -42,7 +39,7 @@ public class GameMap {
 						{
 							if(i+x >= 0 && i+x <= 15 && j+y >= 0 && j+y <= 15)
 							{
-								if(MAP[i+x][j+y] != -1) // 0,0 continue here
+								if(MAP[i+x][j+y] != 9) // 0,0 continue here
 								{
 									MAP[i+x][j+y]++;
 								}
@@ -55,11 +52,15 @@ public class GameMap {
 	}
 	public boolean HaveBomb(int row,int col)
 	{
-		return MAP[row][col] == -1;
+		return MAP[row][col] == 9;
 	}
 	public int getIsFlag(int row,int col)
 	{
 		return isFlag[row][col];
 	}
-	
+	public int getNo(int row,int col)
+	{
+		return MAP[row][col];
+	}
+
 }
