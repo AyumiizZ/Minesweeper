@@ -13,17 +13,8 @@ public class GameScreen extends ScreenAdapter{
 	public GameScreen (MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
-		revealed = new Texture[10];
-		revealed[0] = new Texture("0.png");
-		revealed[1] = new Texture("1.png");
-		revealed[2] = new Texture("2.png");
-		revealed[3] = new Texture("3.png");
-		revealed[4] = new Texture("4.png");
-		revealed[5] = new Texture("5.png");
-		revealed[6] = new Texture("6.png");
-		revealed[7] = new Texture("7.png");
-		revealed[8] = new Texture("8.png");
-		revealed[9] = new Texture("unclicked_bomb.png");
+		setTexture();
+
 	}
 	@Override
 	public void render(float delta) {
@@ -44,5 +35,13 @@ public class GameScreen extends ScreenAdapter{
 	{
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
+	
+	private void setTexture()
+	{
+		revealed = new Texture[10];
+		for(int i = 0; i < 9;i++)
+			revealed[i] = new Texture(i+".png");
+		revealed[9] = new Texture("unclicked_bomb.png");
 	}
 }
