@@ -5,7 +5,8 @@ import java.util.Random;
 public class GameMap {
 	Random rand = new Random();
 	private int[][] MAP = new int[16][16];
-	private int[][] isFlag = new int[16][16];
+	private int[][] FLAG = new int[16][16];
+	private boolean[][] REVEAL = new boolean[16][16];
 	public GameMap() {
 		genMines();
 		genNum();
@@ -54,9 +55,13 @@ public class GameMap {
 	{
 		return MAP[row][col] == 9;
 	}
-	public int getIsFlag(int row,int col)
+	public int IsFlag(int row,int col)
 	{
-		return isFlag[row][col];
+		return FLAG[row][col];
+	}
+	public boolean IsReaveal(int row, int col)
+	{
+		return REVEAL[row][col];
 	}
 	public int getNo(int row,int col)
 	{
