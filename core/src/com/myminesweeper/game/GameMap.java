@@ -67,5 +67,9 @@ public class GameMap {
 	{
 		return MAP[row][col];
 	}
+	public void setReaveal(int row, int col)
+	{
+		REVEAL[row][col] = true;
+	}
 
 }
