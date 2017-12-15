@@ -67,9 +67,26 @@ public class GameMap {
 	{
 		return MAP[row][col];
 	}
-	public void setReaveal(int row, int col)
-	{
-		REVEAL[row][col] = true;
+	public boolean setReveal(int row, int col)
+	{	
+		if(row >= 0 && row <= 15 && col >= 0 && col <= 15 && !REVEAL[row][col]) {
+			REVEAL[row][col] = true;
+			if(MAP[row][col] == 0)
+			{
+				for(int i = -1;i<=1;i++)
+				{
+					for(int j = -1;j<=1;j++) {
+						if(i+row >= 0 && i+row <= 15 && j+col >= 0 && j+col <= 15)
+						{
+							if(MAP[i+row][j+col] != -1) // 0,0 continue here
+							{
+								setReveal(i+row,j+col);
+							}
+						}
+					}
+				}
+			}
+		}
+		return HaveBomb(row,col);
 	}
-
 }
