@@ -60,8 +60,8 @@ public class GameMap {
 		return MAP[row][col];
 	}
 
-	public boolean setReveal(int row, int col) {
-		if (row >= 0 && row <= 15 && col >= 0 && col <= 15 && !REVEAL[row][col]) {
+	public void setReveal(int row, int col) {
+		if (row >= 0 && row <= 15 && col >= 0 && col <= 15 && !REVEAL[row][col] && FLAG[row][col] == 0) {
 			REVEAL[row][col] = true;
 			if (MAP[row][col] == 0) {
 				for (int i = -1; i <= 1; i++) {
@@ -76,9 +76,7 @@ public class GameMap {
 				}
 			}
 		}
-		return HaveBomb(row, col);
 	}
-
 	public void setFlag(int row, int col) {
 		FLAG[row][col] = (FLAG[row][col] + 1) % 3;
 	}

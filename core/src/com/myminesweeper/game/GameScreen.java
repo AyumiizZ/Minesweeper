@@ -11,6 +11,7 @@ public class GameScreen extends ScreenAdapter {
 	private Texture[] revealed;
 	private Texture notRevealed;
 	private Texture[] somethingElse;
+	private Texture gameOver;
 	private GameMap gameMap;
 	private int MouseX;
 	private int MouseY;
@@ -23,19 +24,24 @@ public class GameScreen extends ScreenAdapter {
 	private Clicker clicker;
 
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
+		init(myMinesweeperGame,gameMap);
+	}
+
+	public void init(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
 		setTexture();
 		this.clicker = new Clicker();
 		this.sumTimeClick = 0;
 		Gdx.input.setInputProcessor(clicker);
-
 	}
-
 	@Override
 	public void render(float delta) {
 		if (!die) {
 			update(delta);
+		}
+		else{
+			init(myMinesweeperGame, gameMap);
 		}
 		SpriteBatch batch = myMinesweeperGame.batch;
 		clear();
@@ -49,9 +55,13 @@ public class GameScreen extends ScreenAdapter {
 		this.MouseY = clicker.getY();
 		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
 				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
-			System.out.println("Left ClickX: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
+			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
 			sumTimeClick = 0;
-			die = gameMap.setReveal((MouseX - 280) / 40, 15 - (MouseY - 40) / 40);
+			int row = (MouseX - 280) / 40;
+			int col = 15 - (MouseY - 40) / 40;
+			if(gameMap.IsFlag(row, col) == 0)
+				die = gameMap.HaveBomb(row,col);
+			gameMap.setReveal(row,col);
 			if (die) {
 				dieAtX = (MouseX - 280) / 40;
 				dieAtY = 15 - (MouseY - 40) / 40;
@@ -85,6 +95,8 @@ public class GameScreen extends ScreenAdapter {
 				}
 			}
 		}
+		if(die)
+			batch.draw(gameOver,200,200);
 	}
 
 	public void clear() {
@@ -101,6 +113,7 @@ public class GameScreen extends ScreenAdapter {
 		somethingElse = new Texture[2];
 		somethingElse[0] = new Texture("flag.png");
 		somethingElse[1] = new Texture("ques.png");
+		gameOver = new Texture("badlogic.jpg");
 		notRevealed = new Texture("not_reveal.png");
 	}
 
