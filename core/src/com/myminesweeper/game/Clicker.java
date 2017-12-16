@@ -3,53 +3,49 @@ package com.myminesweeper.game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
-public class Clicker implements InputProcessor{
+public class Clicker implements InputProcessor {
 
 	private int MouseX;
 	private int MouseY;
+
 	public int getX() {
 		return MouseX;
 	}
+
 	public int getY() {
 		return MouseY;
 	}
+
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-//		if(button == Input.Buttons.LEFT) {
-//			System.out.println("X: "+screenX+" Y: "+screenY);
-//			return true;
-//		}
-		if(button == Input.Buttons.LEFT) {
+		if (button == Input.Buttons.LEFT) {
 			MouseX = screenX;
 			MouseY = screenY;
+		} else if (button == Input.Buttons.RIGHT) {
+			MouseX = screenX << 10;
+			MouseY = screenY << 10;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		if(button == Input.Buttons.LEFT)
-		{
+		if (button == Input.Buttons.LEFT || button == Input.Buttons.RIGHT) {
 			MouseX = 0;
 			MouseY = 0;
 		}
@@ -58,19 +54,16 @@ public class Clicker implements InputProcessor{
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -10,6 +10,7 @@ public class GameScreen extends ScreenAdapter {
 	private MyMinesweeperGame myMinesweeperGame;
 	private Texture[] revealed;
 	private Texture notRevealed;
+	private Texture[] somethingElse;
 	private GameMap gameMap;
 	private int MouseX;
 	private int MouseY;
@@ -18,6 +19,7 @@ public class GameScreen extends ScreenAdapter {
 	private int dieAtX;
 	private int dieAtY;
 	private boolean die;
+	private float sumTimeClick;
 	private Clicker clicker;
 
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
@@ -25,6 +27,7 @@ public class GameScreen extends ScreenAdapter {
 		this.gameMap = gameMap;
 		setTexture();
 		this.clicker = new Clicker();
+		this.sumTimeClick = 0;
 		Gdx.input.setInputProcessor(clicker);
 
 	}
@@ -46,18 +49,26 @@ public class GameScreen extends ScreenAdapter {
 		this.MouseY = clicker.getY();
 		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
 				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
-			System.out.println("X: " + MouseX + " Y: " + MouseY);
+			System.out.println("Left ClickX: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
+			sumTimeClick = 0;
 			die = gameMap.setReveal((MouseX - 280) / 40, 15 - (MouseY - 40) / 40);
 			if (die) {
 				dieAtX = (MouseX - 280) / 40;
 				dieAtY = 15 - (MouseY - 40) / 40;
 			}
 
+		} else if (MouseX >= 280 << 10 && MouseX <= (16 * 40 + 280) << 10 && MouseY >= 40 << 10
+				&& MouseY <= (16 * 40 + 40) << 10 && this.tempX != this.MouseX && this.tempY != this.MouseY) {
+			System.out.println(
+					"Right Click at X: " + (MouseX >> 10) + " Y: " + (MouseY >> 10) + " time: " + sumTimeClick);
+			sumTimeClick = 0;
+			gameMap.setFlag(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
 		}
 		if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != this.MouseX && this.tempY != this.MouseY)) {
 			this.tempX = this.MouseX;
 			this.tempY = this.MouseY;
 		}
+		sumTimeClick += delta;
 	}
 
 	public void updateMap(SpriteBatch batch) {
@@ -65,6 +76,8 @@ public class GameScreen extends ScreenAdapter {
 			for (int j = 0; j < 16; j++) {
 				if (gameMap.IsReaveal(i, j)) {
 					batch.draw(revealed[gameMap.getNo(i, j)], i * 40 + 280, j * 40 + 40);
+				} else if (gameMap.IsFlag(i, j) > 0) {
+					batch.draw(somethingElse[gameMap.IsFlag(i, j) - 1], i * 40 + 280, j * 40 + 40);
 				} else if (gameMap.HaveBomb(i, j) && die) {
 					batch.draw(revealed[10], i * 40 + 280, j * 40 + 40);
 				} else {
@@ -85,6 +98,9 @@ public class GameScreen extends ScreenAdapter {
 			revealed[i] = new Texture(i + ".png");
 		revealed[9] = new Texture("clicked_bomb.png");
 		revealed[10] = new Texture("unclicked_bomb.png");
+		somethingElse = new Texture[2];
+		somethingElse[0] = new Texture("flag.png");
+		somethingElse[1] = new Texture("ques.png");
 		notRevealed = new Texture("not_reveal.png");
 	}
 
