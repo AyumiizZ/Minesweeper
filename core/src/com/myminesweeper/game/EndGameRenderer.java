@@ -23,11 +23,11 @@ public class EndGameRenderer {
 	}
 
 	private void loseRender() {
-		batch.draw(youLose, 240, 110);
+		batch.draw(youLose, 200, 110);
 	}
 
 	private void winRender() {
-		batch.draw(youWin, 280, 40);
+		batch.draw(youWin, 240, 40);
 	}
 
 	private void setTexture() {
