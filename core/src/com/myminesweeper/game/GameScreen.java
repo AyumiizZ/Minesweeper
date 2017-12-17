@@ -17,14 +17,16 @@ public class GameScreen extends ScreenAdapter {
 	private int MouseY;
 	private int tempX;
 	private int tempY;
-	private int dieAtX;
-	private int dieAtY;
+	private int tempRow;
+	private int tempCol;
 	private boolean die;
+	private boolean win;
 	private float sumTimeClick;
 	private Clicker clicker;
 
+	
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
-		init(myMinesweeperGame,gameMap);
+		init(myMinesweeperGame, gameMap);
 	}
 
 	public void init(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
@@ -35,13 +37,15 @@ public class GameScreen extends ScreenAdapter {
 		this.sumTimeClick = 0;
 		Gdx.input.setInputProcessor(clicker);
 	}
+
 	@Override
 	public void render(float delta) {
-		if (!die) {
+		if (!die && !win) {
 			update(delta);
 		}
-		else{
-			init(myMinesweeperGame, gameMap);
+		else if(win)
+		{
+			System.out.println("WIN");
 		}
 		SpriteBatch batch = myMinesweeperGame.batch;
 		clear();
@@ -56,16 +60,19 @@ public class GameScreen extends ScreenAdapter {
 		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
 				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
 			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
-			sumTimeClick = 0;
+			
 			int row = (MouseX - 280) / 40;
 			int col = 15 - (MouseY - 40) / 40;
-			if(gameMap.IsFlag(row, col) == 0)
-				die = gameMap.HaveBomb(row,col);
-			gameMap.setReveal(row,col);
-			if (die) {
-				dieAtX = (MouseX - 280) / 40;
-				dieAtY = 15 - (MouseY - 40) / 40;
+			gameMap.setReveal(row, col);
+			if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
+				gameMap.doubleClickReveal(row,col);
 			}
+			die = gameMap.haveBombRevealed();
+			win = gameMap.NotBombRevealed();
+			sumTimeClick = 0;
+			tempRow = row;
+			tempCol = col;
+			
 
 		} else if (MouseX >= 280 << 10 && MouseX <= (16 * 40 + 280) << 10 && MouseY >= 40 << 10
 				&& MouseY <= (16 * 40 + 40) << 10 && this.tempX != this.MouseX && this.tempY != this.MouseY) {
@@ -73,6 +80,8 @@ public class GameScreen extends ScreenAdapter {
 					"Right Click at X: " + (MouseX >> 10) + " Y: " + (MouseY >> 10) + " time: " + sumTimeClick);
 			sumTimeClick = 0;
 			gameMap.setFlag(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
+
+			System.out.println("FLAG: "+gameMap.NumFlag());
 		}
 		if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != this.MouseX && this.tempY != this.MouseY)) {
 			this.tempX = this.MouseX;
@@ -95,8 +104,8 @@ public class GameScreen extends ScreenAdapter {
 				}
 			}
 		}
-		if(die)
-			batch.draw(gameOver,200,200);
+		if (die)
+			batch.draw(gameOver, 200, 200);
 	}
 
 	public void clear() {
