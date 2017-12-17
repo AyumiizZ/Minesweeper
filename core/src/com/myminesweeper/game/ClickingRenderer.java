@@ -87,7 +87,7 @@ public class ClickingRenderer {
 	private void rightClick(int row, int col) {
 		if (die == false && win == false) {
 			gameMapRenderer.setFlag(row, col);
-			System.out.println("FLAG: " + gameMapRenderer.NumFlag());
+//			System.out.println("FLAG: " + gameMapRenderer.NumFlag());
 			sumTimeClick = 0;
 		}
 	}

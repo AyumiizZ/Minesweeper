@@ -12,7 +12,7 @@ public class GameMap {
 	public GameMap() {
 		genMines();
 		genNum();
-		debug();
+//		debug();
 	}
 
 	private void debug() {
