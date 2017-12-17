@@ -11,6 +11,7 @@ public class GameMapRenderer {
 	public int XSTART = 240;
 	public int YSTART = 40;
 	public int BLOCKSIZE = 40;
+
 	public GameMapRenderer(GameMap gameMap) {
 		this.gameMap = gameMap;
 		setTexture();
@@ -40,12 +41,12 @@ public class GameMapRenderer {
 					if (i + row >= 0 && i + row <= 15 && j + col >= 0 && j + col <= 15) {
 						if (gameMap.isFlag(i + row, j + col) > 0) {
 							noFlag++;
-//							System.out.println("Flag at X: " + (row + i) + " Y: " + (col + j));
+							// System.out.println("Flag at X: " + (row + i) + " Y: " + (col + j));
 						}
 					}
 				}
 			}
-//			System.out.println("noFlag = " + noFlag);
+			// System.out.println("noFlag = " + noFlag);
 			if (noFlag >= gameMap.getNo(row, col)) {
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {
@@ -98,6 +99,8 @@ public class GameMapRenderer {
 			for (int j = 0; j < 16; j++) {
 				if (gameMap.isReveal(i, j)) {
 					batch.draw(revealed[gameMap.getNo(i, j)], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
+				} else if (gameMap.isFlag(i, j) > 0 && die && gameMap.haveBomb(i, j) == false) {
+					batch.draw(somethingElse[2], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				} else if (gameMap.isFlag(i, j) > 0) {
 					batch.draw(somethingElse[gameMap.isFlag(i, j) - 1], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				} else if (gameMap.haveBomb(i, j) && die) {
@@ -122,9 +125,10 @@ public class GameMapRenderer {
 			revealed[i] = new Texture(i + ".png");
 		revealed[9] = new Texture("clicked_bomb.png");
 		revealed[10] = new Texture("unclicked_bomb.png");
-		somethingElse = new Texture[2];
+		somethingElse = new Texture[3];
 		somethingElse[0] = new Texture("flag.png");
 		somethingElse[1] = new Texture("ques.png");
+		somethingElse[2] = new Texture("wrong_flag.png");
 		notRevealed = new Texture("not_reveal.png");
 	}
 }
