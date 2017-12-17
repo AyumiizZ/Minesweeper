@@ -101,6 +101,7 @@ public class GameMap {
 					if (i + row >= 0 && i + row <= 15 && j + col >= 0 && j + col <= 15) {
 						if (IsFlag(i + row, j + col) > 0) {
 							noFlag++;
+							System.out.println("Flag at X: "+(row+i)+" Y: "+(col+j));
 						}
 					}
 				}

@@ -11,8 +11,10 @@ public class GameScreen extends ScreenAdapter {
 	private Texture[] revealed;
 	private Texture notRevealed;
 	private Texture[] somethingElse;
-	private Texture gameOver;
+	private Texture youLose;
+	private Texture youWin;
 	private Texture background;
+	private Texture button;
 	private GameMap gameMap;
 	private int MouseX;
 	private int MouseY;
@@ -26,10 +28,6 @@ public class GameScreen extends ScreenAdapter {
 	private Clicker clicker;
 
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
-		init(myMinesweeperGame, gameMap);
-	}
-
-	public void init(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
 		setTexture();
@@ -40,22 +38,28 @@ public class GameScreen extends ScreenAdapter {
 
 	@Override
 	public void render(float delta) {
-		if (!die && !win) {
-			update(delta);
-		} else if (win) {
-			System.out.println("WIN");
-		}
 		SpriteBatch batch = myMinesweeperGame.batch;
 		batch.begin();
 		clear();
 		batch.draw(background, 0, 0);
 		updateMap(batch);
+		batch.draw(button, 18*40+280, 80);
+		if (!die && !win) {
+			update(delta);
+		} else if (win) {
+			batch.draw(youWin, 280, 40);
+		}
 		batch.end();
 	}
 
 	public void update(float delta) {
 		this.MouseX = clicker.getX();
 		this.MouseY = clicker.getY();
+		if(MouseX >= 18*40+280 && MouseX<= 18*40+280+160 && MouseY <= 720 - 80 && MouseY >= 720-80-80) {
+
+			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
+			this.gameMap = new GameMap();
+		}
 		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
 				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
 			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
@@ -103,7 +107,7 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 		if (die)
-			batch.draw(gameOver, 200, 200);
+			batch.draw(youLose, 240, 110);
 	}
 
 	public void clear() {
@@ -120,9 +124,11 @@ public class GameScreen extends ScreenAdapter {
 		somethingElse = new Texture[2];
 		somethingElse[0] = new Texture("flag.png");
 		somethingElse[1] = new Texture("ques.png");
-		gameOver = new Texture("badlogic.jpg");
+		youLose = new Texture("you_lose.png");
 		background = new Texture("background.png");
 		notRevealed = new Texture("not_reveal.png");
+		youWin = new Texture("you_win.png");
+		button = new Texture("button.png");
 	}
 
 }
