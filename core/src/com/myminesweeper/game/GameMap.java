@@ -16,12 +16,12 @@ public class GameMap {
 
 	private void debug() {
 		for (int j = 0; j < 16; j++) {
-			for (int i = 0; i < 16;i++) {
-				System.out.print(MAP[i][15-j]+" ");
+			for (int i = 0; i < 16; i++) {
+				System.out.print(MAP[i][15 - j] + " ");
 			}
 			System.out.println("");
 		}
-		
+
 	}
 
 	private void genMines() {
@@ -55,100 +55,27 @@ public class GameMap {
 		}
 	}
 
-	public boolean HaveBomb(int row, int col) {
+	public boolean haveBomb(int row, int col) {
 		return MAP[row][col] == 9;
 	}
 
-	public int IsFlag(int row, int col) {
+	public int isFlag(int row, int col) {
 		return FLAG[row][col];
 	}
 
-	public boolean IsReaveal(int row, int col) {
+	public boolean isReveal(int row, int col) {
 		return REVEAL[row][col];
+	}
+
+	public void setReveal(int row, int col, boolean input) {
+		REVEAL[row][col] = input;
 	}
 
 	public int getNo(int row, int col) {
 		return MAP[row][col];
 	}
 
-	public void setReveal(int row, int col) {
-		if (row >= 0 && row <= 15 && col >= 0 && col <= 15 && !REVEAL[row][col] && FLAG[row][col] == 0) {
-			REVEAL[row][col] = true;
-			if (MAP[row][col] == 0) {
-				for (int i = -1; i <= 1; i++) {
-					for (int j = -1; j <= 1; j++) {
-						if (i + row >= 0 && i + row <= 15 && j + col >= 0 && j + col <= 15) {
-							// if (MAP[i + row][j + col] != 9) // 0,0 continue here
-							// {
-							setReveal(i + row, j + col);
-							// }
-						}
-					}
-				}
-			}
-		}
-	}
-
 	public void setFlag(int row, int col) {
 		FLAG[row][col] = (FLAG[row][col] + 1) % 3;
-	}
-
-	public void doubleClickReveal(int row, int col) {
-		int noFlag = 0;
-		if (REVEAL[row][col] == true) {
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					if (i + row >= 0 && i + row <= 15 && j + col >= 0 && j + col <= 15) {
-						if (IsFlag(i + row, j + col) > 0) {
-							noFlag++;
-							System.out.println("Flag at X: "+(row+i)+" Y: "+(col+j));
-						}
-					}
-				}
-			}
-			System.out.println("noFlag = " + noFlag);
-			if (noFlag >= getNo(row, col)) {
-				for (int i = -1; i <= 1; i++) {
-					for (int j = -1; j <= 1; j++) {
-						if (i + row >= 0 && i + row <= 15 && j + col >= 0 && j + col <= 15) {
-							setReveal(i + row, j + col);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public boolean haveBombRevealed() {
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				if (HaveBomb(i, j) && IsReaveal(i, j)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	public int NumFlag() {
-		int noFlag = 0;
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				if (IsFlag(i,j) == 1) {
-					noFlag++;
-				}
-			}
-		}
-		return noFlag;
-	}
-
-	public boolean NotBombRevealed() {
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				if (!HaveBomb(i, j) && !IsReaveal(i, j)) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }

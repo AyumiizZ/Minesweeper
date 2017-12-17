@@ -8,11 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameScreen extends ScreenAdapter {
 	private MyMinesweeperGame myMinesweeperGame;
-	private Texture[] revealed;
-	private Texture notRevealed;
-	private Texture[] somethingElse;
-	private Texture youLose;
-	private Texture youWin;
+	private GameMapRenderer gameMapRenderer;
+	private EndGameRenderer endGameRenderer;
 	private Texture background;
 	private Texture button;
 	private GameMap gameMap;
@@ -30,6 +27,8 @@ public class GameScreen extends ScreenAdapter {
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
+		this.gameMapRenderer = new GameMapRenderer(myMinesweeperGame.batch, gameMap);
+		this.endGameRenderer = new EndGameRenderer(myMinesweeperGame.batch);
 		setTexture();
 		this.clicker = new Clicker();
 		this.sumTimeClick = 0;
@@ -42,12 +41,12 @@ public class GameScreen extends ScreenAdapter {
 		batch.begin();
 		clear();
 		batch.draw(background, 0, 0);
-		updateMap(batch);
-		batch.draw(button, 18*40+280, 80);
+		gameMapRenderer.updateMap(batch, die);
+		batch.draw(button, 18 * 40 + 280, 80);
 		if (!die && !win) {
 			update(delta);
-		} else if (win) {
-			batch.draw(youWin, 280, 40);
+		} else {
+			endGameRenderer.end(win, die);
 		}
 		batch.end();
 	}
@@ -55,7 +54,7 @@ public class GameScreen extends ScreenAdapter {
 	public void update(float delta) {
 		this.MouseX = clicker.getX();
 		this.MouseY = clicker.getY();
-		if(MouseX >= 18*40+280 && MouseX<= 18*40+280+160 && MouseY <= 720 - 80 && MouseY >= 720-80-80) {
+		if (MouseX >= 18 * 40 + 280 && MouseX <= 18 * 40 + 280 + 160 && MouseY <= 720 - 80 && MouseY >= 720 - 80 - 80) {
 
 			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
 			this.gameMap = new GameMap();
@@ -66,12 +65,12 @@ public class GameScreen extends ScreenAdapter {
 
 			int row = (MouseX - 280) / 40;
 			int col = 15 - (MouseY - 40) / 40;
-			gameMap.setReveal(row, col);
+			gameMapRenderer.setReveal(row, col);
 			if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
-				gameMap.doubleClickReveal(row, col);
+				gameMapRenderer.doubleClickReveal(row, col);
 			}
-			die = gameMap.haveBombRevealed();
-			win = gameMap.NotBombRevealed();
+			die = gameMapRenderer.haveBombRevealed();
+			win = gameMapRenderer.NotBombRevealed();
 			sumTimeClick = 0;
 			tempRow = row;
 			tempCol = col;
@@ -83,7 +82,7 @@ public class GameScreen extends ScreenAdapter {
 			sumTimeClick = 0;
 			gameMap.setFlag(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
 
-			System.out.println("FLAG: " + gameMap.NumFlag());
+			System.out.println("FLAG: " + gameMapRenderer.NumFlag());
 		}
 		if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != this.MouseX && this.tempY != this.MouseY)) {
 			this.tempX = this.MouseX;
@@ -92,42 +91,15 @@ public class GameScreen extends ScreenAdapter {
 		sumTimeClick += delta;
 	}
 
-	public void updateMap(SpriteBatch batch) {
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				if (gameMap.IsReaveal(i, j)) {
-					batch.draw(revealed[gameMap.getNo(i, j)], i * 40 + 280, j * 40 + 40);
-				} else if (gameMap.IsFlag(i, j) > 0) {
-					batch.draw(somethingElse[gameMap.IsFlag(i, j) - 1], i * 40 + 280, j * 40 + 40);
-				} else if (gameMap.HaveBomb(i, j) && die) {
-					batch.draw(revealed[10], i * 40 + 280, j * 40 + 40);
-				} else {
-					batch.draw(notRevealed, i * 40 + 280, j * 40 + 40);
-				}
-			}
-		}
-		if (die)
-			batch.draw(youLose, 240, 110);
-	}
-
 	public void clear() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 
 	private void setTexture() {
-		revealed = new Texture[11];
-		for (int i = 0; i < 9; i++)
-			revealed[i] = new Texture(i + ".png");
-		revealed[9] = new Texture("clicked_bomb.png");
-		revealed[10] = new Texture("unclicked_bomb.png");
-		somethingElse = new Texture[2];
-		somethingElse[0] = new Texture("flag.png");
-		somethingElse[1] = new Texture("ques.png");
-		youLose = new Texture("you_lose.png");
+		// youLose = new Texture("you_lose.png");
 		background = new Texture("background.png");
-		notRevealed = new Texture("not_reveal.png");
-		youWin = new Texture("you_win.png");
+		// youWin = new Texture("you_win.png");
 		button = new Texture("button.png");
 	}
 
