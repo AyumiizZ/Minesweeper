@@ -108,6 +108,12 @@ public class GameMapRenderer {
 		}
 	}
 
+	public void setFlag(int row, int col) {
+		if (gameMap.isReveal(row, col) == false) {
+			gameMap.setFlag(row, col);
+		}
+	}
+
 	private void setTexture() {
 		revealed = new Texture[11];
 		for (int i = 0; i < 9; i++)

@@ -4,9 +4,10 @@ import java.util.Random;
 
 public class GameMap {
 	Random rand = new Random();
-	private int[][] MAP = new int[16][16];
-	private int[][] FLAG = new int[16][16];
-	private boolean[][] REVEAL = new boolean[16][16];
+	private int MAPSIZE = 16;
+	private int[][] MAP = new int[MAPSIZE][MAPSIZE];
+	private int[][] FLAG = new int[MAPSIZE][MAPSIZE];
+	private boolean[][] REVEAL = new boolean[MAPSIZE][MAPSIZE];
 
 	public GameMap() {
 		genMines();
@@ -15,30 +16,30 @@ public class GameMap {
 	}
 
 	private void debug() {
-		for (int j = 0; j < 16; j++) {
-			for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < MAPSIZE; j++) {
+			for (int i = 0; i < MAPSIZE; i++) {
 				System.out.print(MAP[i][15 - j] + " ");
 			}
 			System.out.println("");
 		}
-
+		System.out.println("\n");
 	}
 
 	private void genMines() {
 		for (int i = 0; i < 40; i++) {
-			int x = rand.nextInt(16);
-			int y = rand.nextInt(16);
+			int x = rand.nextInt(MAPSIZE);
+			int y = rand.nextInt(MAPSIZE);
 			while (MAP[x][y] == 9) {
-				x = rand.nextInt(16);
-				y = rand.nextInt(16);
+				x = rand.nextInt(MAPSIZE);
+				y = rand.nextInt(MAPSIZE);
 			}
 			MAP[x][y] = 9;
 		}
 	}
 
 	private void genNum() {
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
+		for (int i = 0; i < MAPSIZE; i++) {
+			for (int j = 0; j < MAPSIZE; j++) {
 				if (MAP[i][j] == 9) {
 					for (int x = -1; x <= 1; x++) {
 						for (int y = -1; y <= 1; y++) {

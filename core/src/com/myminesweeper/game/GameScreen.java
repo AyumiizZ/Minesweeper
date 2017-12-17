@@ -10,29 +10,21 @@ public class GameScreen extends ScreenAdapter {
 	private MyMinesweeperGame myMinesweeperGame;
 	private GameMapRenderer gameMapRenderer;
 	private EndGameRenderer endGameRenderer;
+	private ClickingRenderer clickingRenderer;
+	private boolean newGame;
 	private Texture background;
 	private Texture button;
 	private GameMap gameMap;
-	private int MouseX;
-	private int MouseY;
-	private int tempX;
-	private int tempY;
-	private int tempRow;
-	private int tempCol;
 	private boolean die;
 	private boolean win;
-	private float sumTimeClick;
-	private Clicker clicker;
 
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
 		this.gameMapRenderer = new GameMapRenderer(myMinesweeperGame.batch, gameMap);
 		this.endGameRenderer = new EndGameRenderer(myMinesweeperGame.batch);
+		this.clickingRenderer = new ClickingRenderer(this, gameMapRenderer);
 		setTexture();
-		this.clicker = new Clicker();
-		this.sumTimeClick = 0;
-		Gdx.input.setInputProcessor(clicker);
 	}
 
 	@Override
@@ -42,53 +34,25 @@ public class GameScreen extends ScreenAdapter {
 		clear();
 		batch.draw(background, 0, 0);
 		gameMapRenderer.updateMap(batch, die);
+		if(newGame == true) {
+			createNewGame();
+		}
+		update(delta);
 		batch.draw(button, 18 * 40 + 280, 80);
-		if (!die && !win) {
-			update(delta);
-		} else {
-			endGameRenderer.end(win, die);
-		}
 		batch.end();
+		
 	}
-
+	private void createNewGame() {
+		this.gameMap = new GameMap();
+		this.gameMapRenderer = new GameMapRenderer(myMinesweeperGame.batch, gameMap);
+		this.clickingRenderer = new ClickingRenderer(this, gameMapRenderer);
+	}
 	public void update(float delta) {
-		this.MouseX = clicker.getX();
-		this.MouseY = clicker.getY();
-		if (MouseX >= 18 * 40 + 280 && MouseX <= 18 * 40 + 280 + 160 && MouseY <= 720 - 80 && MouseY >= 720 - 80 - 80) {
-
-			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
-			this.gameMap = new GameMap();
-		}
-		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
-				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
-			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
-
-			int row = (MouseX - 280) / 40;
-			int col = 15 - (MouseY - 40) / 40;
-			gameMapRenderer.setReveal(row, col);
-			if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
-				gameMapRenderer.doubleClickReveal(row, col);
-			}
-			die = gameMapRenderer.haveBombRevealed();
-			win = gameMapRenderer.NotBombRevealed();
-			sumTimeClick = 0;
-			tempRow = row;
-			tempCol = col;
-
-		} else if (MouseX >= 280 << 10 && MouseX <= (16 * 40 + 280) << 10 && MouseY >= 40 << 10
-				&& MouseY <= (16 * 40 + 40) << 10 && this.tempX != this.MouseX && this.tempY != this.MouseY) {
-			System.out.println(
-					"Right Click at X: " + (MouseX >> 10) + " Y: " + (MouseY >> 10) + " time: " + sumTimeClick);
-			sumTimeClick = 0;
-			gameMap.setFlag(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
-
-			System.out.println("FLAG: " + gameMapRenderer.NumFlag());
-		}
-		if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != this.MouseX && this.tempY != this.MouseY)) {
-			this.tempX = this.MouseX;
-			this.tempY = this.MouseY;
-		}
-		sumTimeClick += delta;
+		clickingRenderer.updateClicking(delta);
+		die = clickingRenderer.getDie();
+		win = clickingRenderer.getWin();
+		newGame = clickingRenderer.wannaNewGame();
+		endGameRenderer.end(win, die);
 	}
 
 	public void clear() {
@@ -97,9 +61,7 @@ public class GameScreen extends ScreenAdapter {
 	}
 
 	private void setTexture() {
-		// youLose = new Texture("you_lose.png");
 		background = new Texture("background.png");
-		// youWin = new Texture("you_win.png");
 		button = new Texture("button.png");
 	}
 
