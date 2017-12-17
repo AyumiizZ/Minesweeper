@@ -12,6 +12,7 @@ public class GameScreen extends ScreenAdapter {
 	private Texture notRevealed;
 	private Texture[] somethingElse;
 	private Texture gameOver;
+	private Texture background;
 	private GameMap gameMap;
 	private int MouseX;
 	private int MouseY;
@@ -24,7 +25,6 @@ public class GameScreen extends ScreenAdapter {
 	private float sumTimeClick;
 	private Clicker clicker;
 
-	
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		init(myMinesweeperGame, gameMap);
 	}
@@ -42,14 +42,13 @@ public class GameScreen extends ScreenAdapter {
 	public void render(float delta) {
 		if (!die && !win) {
 			update(delta);
-		}
-		else if(win)
-		{
+		} else if (win) {
 			System.out.println("WIN");
 		}
 		SpriteBatch batch = myMinesweeperGame.batch;
-		clear();
 		batch.begin();
+		clear();
+		batch.draw(background, 0, 0);
 		updateMap(batch);
 		batch.end();
 	}
@@ -60,19 +59,18 @@ public class GameScreen extends ScreenAdapter {
 		if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40
 				&& this.tempX != this.MouseX && this.tempY != this.MouseY) {
 			System.out.println("Left Click at X: " + MouseX + " Y: " + MouseY + " time: " + sumTimeClick);
-			
+
 			int row = (MouseX - 280) / 40;
 			int col = 15 - (MouseY - 40) / 40;
 			gameMap.setReveal(row, col);
 			if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
-				gameMap.doubleClickReveal(row,col);
+				gameMap.doubleClickReveal(row, col);
 			}
 			die = gameMap.haveBombRevealed();
 			win = gameMap.NotBombRevealed();
 			sumTimeClick = 0;
 			tempRow = row;
 			tempCol = col;
-			
 
 		} else if (MouseX >= 280 << 10 && MouseX <= (16 * 40 + 280) << 10 && MouseY >= 40 << 10
 				&& MouseY <= (16 * 40 + 40) << 10 && this.tempX != this.MouseX && this.tempY != this.MouseY) {
@@ -81,7 +79,7 @@ public class GameScreen extends ScreenAdapter {
 			sumTimeClick = 0;
 			gameMap.setFlag(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
 
-			System.out.println("FLAG: "+gameMap.NumFlag());
+			System.out.println("FLAG: " + gameMap.NumFlag());
 		}
 		if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != this.MouseX && this.tempY != this.MouseY)) {
 			this.tempX = this.MouseX;
@@ -123,6 +121,7 @@ public class GameScreen extends ScreenAdapter {
 		somethingElse[0] = new Texture("flag.png");
 		somethingElse[1] = new Texture("ques.png");
 		gameOver = new Texture("badlogic.jpg");
+		background = new Texture("background.png");
 		notRevealed = new Texture("not_reveal.png");
 	}
 
