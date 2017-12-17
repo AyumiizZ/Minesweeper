@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameScreen extends ScreenAdapter {
@@ -11,19 +12,19 @@ public class GameScreen extends ScreenAdapter {
 	private GameMapRenderer gameMapRenderer;
 	private EndGameRenderer endGameRenderer;
 	private ClickingRenderer clickingRenderer;
-	private boolean newGame;
 	private Texture background;
 	private Texture button;
 	private GameMap gameMap;
-	private boolean die;
-	private boolean win;
+	private BitmapFont font;
+	private boolean newGame;
 
 	public GameScreen(MyMinesweeperGame myMinesweeperGame, GameMap gameMap) {
 		this.myMinesweeperGame = myMinesweeperGame;
 		this.gameMap = gameMap;
-		this.gameMapRenderer = new GameMapRenderer(myMinesweeperGame.batch, gameMap);
+		this.gameMapRenderer = new GameMapRenderer(gameMap);
 		this.endGameRenderer = new EndGameRenderer(myMinesweeperGame.batch);
-		this.clickingRenderer = new ClickingRenderer(this, gameMapRenderer);
+		this.clickingRenderer = new ClickingRenderer(gameMapRenderer);
+		this.font = new BitmapFont();
 		setTexture();
 	}
 
@@ -31,28 +32,43 @@ public class GameScreen extends ScreenAdapter {
 	public void render(float delta) {
 		SpriteBatch batch = myMinesweeperGame.batch;
 		batch.begin();
-		clear();
-		batch.draw(background, 0, 0);
-		gameMapRenderer.updateMap(batch, die);
-		if(newGame == true) {
+
+		if (clickingRenderer.isUnlucky()) {
+			int tempX = clickingRenderer.dieAtX();
+			int tempY = clickingRenderer.dieAtY();
+			createNewGame();
+			clickingRenderer.unluckyClicking(tempX, tempY);
+		} else {
+			clear();
+			batch.draw(background, 0, 0);
+			batch.draw(button, 18 * 40 +240, 80);
+			gameMapRenderer.updateMap(batch);
+			if(gameMapRenderer.NumFlag()<10)
+				font.draw(batch,gameMapRenderer.NumFlag()+"/40",1006,590);
+			else
+				font.draw(batch,gameMapRenderer.NumFlag()+"/40",1001,590);
+		}
+		if (newGame == true) {
 			createNewGame();
 		}
 		update(delta);
-		batch.draw(button, 18 * 40 + 280, 80);
 		batch.end();
-		
+
 	}
+
 	private void createNewGame() {
 		this.gameMap = new GameMap();
-		this.gameMapRenderer = new GameMapRenderer(myMinesweeperGame.batch, gameMap);
-		this.clickingRenderer = new ClickingRenderer(this, gameMapRenderer);
+		this.gameMapRenderer = new GameMapRenderer(gameMap);
+		this.clickingRenderer = new ClickingRenderer(gameMapRenderer);
 	}
+
 	public void update(float delta) {
 		clickingRenderer.updateClicking(delta);
-		die = clickingRenderer.getDie();
-		win = clickingRenderer.getWin();
+		boolean die = clickingRenderer.getDie();
+		boolean win = clickingRenderer.getWin();
 		newGame = clickingRenderer.wannaNewGame();
-		endGameRenderer.end(win, die);
+		if (clickingRenderer.isUnlucky() == false)
+			endGameRenderer.end(win, die);
 	}
 
 	public void clear() {

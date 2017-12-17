@@ -20,7 +20,6 @@ public class EndGameRenderer {
 		if (die) {
 			loseRender();
 		}
-//		System.out.println(die);
 	}
 
 	private void loseRender() {

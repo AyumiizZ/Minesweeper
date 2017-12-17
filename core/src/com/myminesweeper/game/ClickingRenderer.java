@@ -3,7 +3,6 @@ package com.myminesweeper.game;
 import com.badlogic.gdx.Gdx;
 
 public class ClickingRenderer {
-	private GameScreen gameScreen;
 	private GameMapRenderer gameMapRenderer;
 	private int tempX;
 	private int tempY;
@@ -13,19 +12,25 @@ public class ClickingRenderer {
 	private boolean win;
 	private Clicker clicker;
 	private boolean newGame;
-
+	private boolean firstClick = true;
 	private float sumTimeClick;
+	private boolean dieAtFirstClick;
 
-	public ClickingRenderer(GameScreen gameScreen, GameMapRenderer gameMapRenderer) {
-		this.gameScreen = gameScreen;
+	public ClickingRenderer(GameMapRenderer gameMapRenderer) {
 		this.gameMapRenderer = gameMapRenderer;
 		this.clicker = new Clicker();
 		Gdx.input.setInputProcessor(clicker);
 	}
 
 	public void updateClicking(float delta) {
-		checkClicking(clicker.getX(),clicker.getY());
+		int MouseX = clicker.getX();
+		int MouseY = clicker.getY();
+		checkClicking(MouseX, MouseY);
 		sumTimeClick += delta;
+	}
+
+	public void unluckyClicking(int MouseX, int MouseY) {
+		checkClicking(MouseX, MouseY);
 	}
 
 	public boolean getDie() {
@@ -35,27 +40,38 @@ public class ClickingRenderer {
 	public boolean getWin() {
 		return win;
 	}
+
 	public boolean wannaNewGame() {
 		return newGame;
 	}
-//	public void newGame() {
-//		newGameClick(false);
-////		System.out.println(newGame);
-//		this.die = false;
-//		this.win = false;
-//	}
+
+	public boolean isUnlucky() {
+		return dieAtFirstClick;
+	}
+
+	public int dieAtX() {
+		return tempX;
+	}
+
+	public int dieAtY() {
+		return tempY;
+	}
+
 	private void checkClicking(int MouseX, int MouseY) {
 		if (this.tempX != MouseX && this.tempY != MouseY) {
-			if (MouseX >= 18 * 40 + 280 && MouseX <= 18 * 40 + 280 + 160 && MouseY <= 720 - 80
+			if (MouseX >= 18 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.XSTART && MouseX <= 18 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.XSTART + 160 && MouseY <= 720 - 80
 					&& MouseY >= 720 - 80 - 80) {
-//				System.out.println("A");
 				newGameClick();
 			}
-			if (MouseX >= 280 && MouseX <= 16 * 40 + 280 && MouseY >= 40 && MouseY <= 16 * 40 + 40) {
-				leftClick((MouseX - 280) / 40, 15 - (MouseY - 40) / 40);
-			} else if (MouseX >= 280 << 10 && MouseX <= (16 * 40 + 280) << 10 && MouseY >= 40 << 10
-					&& MouseY <= (16 * 40 + 40) << 10) {
-				rightClick(((MouseX >> 10) - 280) / 40, 15 - ((MouseY >> 10) - 40) / 40);
+			if (MouseX >= gameMapRenderer.XSTART && MouseX <= 16 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.XSTART && MouseY >= gameMapRenderer.YSTART && MouseY <= 16 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.YSTART) {
+				leftClick((MouseX - gameMapRenderer.XSTART) / gameMapRenderer.BLOCKSIZE, 15 - (MouseY - gameMapRenderer.YSTART) / gameMapRenderer.BLOCKSIZE);
+				if (die == true && firstClick) {
+					this.dieAtFirstClick = true;
+				}
+				firstClick = false;
+			} else if (MouseX >= gameMapRenderer.XSTART << 10 && MouseX <= (16 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.XSTART) << 10 && MouseY >= gameMapRenderer.YSTART << 10
+					&& MouseY <= (16 * gameMapRenderer.BLOCKSIZE + gameMapRenderer.YSTART) << 10) {
+				rightClick(((MouseX >> 10) - gameMapRenderer.XSTART) / gameMapRenderer.BLOCKSIZE, 15 - ((MouseY >> 10) - gameMapRenderer.YSTART) / gameMapRenderer.BLOCKSIZE);
 			}
 			if ((this.tempX == 0 && this.tempY == 0) || (this.tempX != MouseX && this.tempY != MouseY)) {
 				this.tempX = MouseX;
@@ -63,30 +79,30 @@ public class ClickingRenderer {
 			}
 		}
 	}
+
 	public void newGameClick() {
 		this.newGame = true;
 	}
+
 	private void rightClick(int row, int col) {
-		if(die==false && win==false)
-		{
-		gameMapRenderer.setFlag(row, col);
-		System.out.println("FLAG: " + gameMapRenderer.NumFlag());
-		sumTimeClick = 0;
+		if (die == false && win == false) {
+			gameMapRenderer.setFlag(row, col);
+			System.out.println("FLAG: " + gameMapRenderer.NumFlag());
+			sumTimeClick = 0;
 		}
 	}
 
 	private void leftClick(int row, int col) {
-		if(die==false && win==false)
-		{
-		gameMapRenderer.setReveal(row, col);
-		if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
-			gameMapRenderer.doubleClickReveal(row, col);
-		}
-		die = gameMapRenderer.haveBombRevealed();
-		win = gameMapRenderer.NotBombRevealed();
-		sumTimeClick = 0;
-		tempRow = row;
-		tempCol = col;
+		if (die == false && win == false) {
+			gameMapRenderer.setReveal(row, col);
+			if (tempRow == row && tempCol == col && sumTimeClick < 0.35) {
+				gameMapRenderer.doubleClickReveal(row, col);
+			}
+			die = gameMapRenderer.haveBombRevealed();
+			win = gameMapRenderer.NotBombRevealed();
+			sumTimeClick = 0;
+			tempRow = row;
+			tempCol = col;
 		}
 	}
 }

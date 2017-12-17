@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameMapRenderer {
 	private GameMap gameMap;
-	private SpriteBatch batch;
 	private Texture[] revealed;
 	private Texture notRevealed;
 	private Texture[] somethingElse;
-
-	public GameMapRenderer(SpriteBatch batch, GameMap gameMap) {
+	public int XSTART = 240;
+	public int YSTART = 40;
+	public int BLOCKSIZE = 40;
+	public GameMapRenderer(GameMap gameMap) {
 		this.gameMap = gameMap;
-		this.batch = batch;
 		setTexture();
 	}
 
@@ -92,20 +92,22 @@ public class GameMapRenderer {
 		return true;
 	}
 
-	public void updateMap(SpriteBatch batch, boolean die) {
+	public void updateMap(SpriteBatch batch) {
+		boolean die = haveBombRevealed();
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				if (gameMap.isReveal(i, j)) {
-					batch.draw(revealed[gameMap.getNo(i, j)], i * 40 + 280, j * 40 + 40);
+					batch.draw(revealed[gameMap.getNo(i, j)], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				} else if (gameMap.isFlag(i, j) > 0) {
-					batch.draw(somethingElse[gameMap.isFlag(i, j) - 1], i * 40 + 280, j * 40 + 40);
+					batch.draw(somethingElse[gameMap.isFlag(i, j) - 1], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				} else if (gameMap.haveBomb(i, j) && die) {
-					batch.draw(revealed[10], i * 40 + 280, j * 40 + 40);
+					batch.draw(revealed[10], i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				} else {
-					batch.draw(notRevealed, i * 40 + 280, j * 40 + 40);
+					batch.draw(notRevealed, i * BLOCKSIZE + XSTART, j * BLOCKSIZE + YSTART);
 				}
 			}
 		}
+		batch.draw(somethingElse[0], 19 * BLOCKSIZE + XSTART, 14 * BLOCKSIZE + YSTART);
 	}
 
 	public void setFlag(int row, int col) {
